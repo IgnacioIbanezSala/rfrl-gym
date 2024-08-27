@@ -123,8 +123,8 @@ class PyQtRenderer(Renderer, QMainWindow):
         self.occupancy_image_item.setImage(self.occupancy_image)  
 
         if self.mode == 'iq':
-            self.__get_spectrogram_image()
-            self.__get_sensing_image()  
+            self.__get_spectrogram_image() 
+            self.__get_sensing_image()
             self.spectrum_image_item.setImage(self.spectrum_image)
             self.sensing_image_item.setImage((self.sensing_image-np.min(self.sensing_image))/(np.max(self.sensing_image)-np.min(self.sensing_image)))
             self.bar1.setImageItem(self.spectrum_image_item, insert_in=self.spectrumPlotItem)  

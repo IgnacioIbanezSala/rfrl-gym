@@ -65,6 +65,17 @@ class RFRLGymIQEnv(gym.Env):
             self.observation_base = 1+self.num_entities
         self.observation_space = gym.spaces.Discrete(self.observation_base**self.num_channels)
 
+    def __get_sensing_image(self):
+        for k in range(self.num_channels):
+            data = self.info['spectrum_data'][0:self.samples_per_step] * np.exp(-1j*2*np.pi*self.fc[k]*self.t)      
+            filtered = signal.sosfilt(self.sos, data)
+            downsampled = filtered[::self.num_channels]
+            sensed_result = np.sum(np.abs(downsampled)**2.0)/(self.samples_per_step/self.num_channels)
+
+            # Since the render() call comes before the step() call in the main loop, we can store
+            # the results we just calculated to avoid expensive duplicate calculations later
+            self.info['sensing_energy_history'][self.info['step_number']][k] = sensed_result
+
     def _get_sensing_results(self):
         # Note: when we get sensing results, they are the results for the frame rendered
         # immediately before the environment's step() method was called
@@ -81,6 +92,8 @@ class RFRLGymIQEnv(gym.Env):
         action -= 1
         self.info['step_number'] += 1
         self.info['action_history'][0][self.info['step_number']] = action
+        if self.render_mode == 'terminal':
+            self.__get_sensing_image()
         self._get_sensing_results()
 
         # Get entity actions and determine player observation.
@@ -94,6 +107,8 @@ class RFRLGymIQEnv(gym.Env):
             if self.reward_mode == 'dsa':
                 self.info['reward_history'][self.info['step_number']] = 2.0*int(self.info['true_history'][self.info['step_number']][action]==0)-1.0
                 #self.info['reward_history'][self.info['step_number']] = 2.0*int(self.sensing_image[action]==0)-1.0
+                #self.info['reward_history'][self.info['step_number']] = 2.0*int(self.info['sensing_history'][self.info['step_number']][action]==0)-1.0
+                
             elif self.reward_mode == 'jam':
                 self.info['reward_history'][self.info['step_number']] = 2.0*int(self.info['true_history'][self.info['step_number']][action]==self.target_idx)-1.0
                 #self.info['reward_history'][self.info['step_number']] = 2.0*int(self.info['sensing_history'][self.info['step_number']][action]==self.target_idx)-1.0
@@ -101,7 +116,8 @@ class RFRLGymIQEnv(gym.Env):
         self.info['cumulative_reward'][self.info['step_number']] = np.sum(self.info['reward_history'])
               
         # Update return variables and run the render.
-        observation = self.__observation_space_encoder(self.info['observation_history'][self.info['step_number']])
+        #observation = self.__observation_space_encoder(self.info['observation_history'][self.info['step_number']])
+        observation = self.__observation_space_encoder(self.info['sensing_history'][self.info['step_number']])
         reward = self.info['reward_history'][self.info['step_number']]
         done = False
         if self.info['step_number'] == self.max_steps:
@@ -148,6 +164,7 @@ class RFRLGymIQEnv(gym.Env):
         self.iq_gen = rfrl_gym.datagen.iq_gen.IQ_Gen(self.num_channels, self.num_entities, self.scenario_metadata['render']['render_history'], self.entity_list)
         self.iq_gen.reset()
         self.info['spectrum_data'] = self.iq_gen.gen_iq(self.info['action_history'][:,self.info['step_number']])
+        
 
         # Reset the render and set return variables.
         observation = self.__observation_space_encoder(self.info['observation_history'][0])

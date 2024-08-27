@@ -76,7 +76,7 @@
     },
     "render":
     {
-        "render_mode": "pyqt",
+        "render_mode": "terminal",
         "render_fps": 20,
         "render_history": 20,
         "render_background": "black"
