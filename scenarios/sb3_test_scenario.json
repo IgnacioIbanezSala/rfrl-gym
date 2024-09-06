@@ -4,7 +4,7 @@
 	    "num_channels": 10,
 	    "max_steps": 100,
 	    "observation_mode": "detect",
-	    "reward_mode": "jam",
+	    "reward_mode": "dsa",
         "target_entity": "fixed_hop_freq_1"
     },
     "entities": 
@@ -25,11 +25,12 @@
                 "duration": 0.25
             }
         },
-        "constant_freq_2":
+        "fixed_hop_freq_0":
         {
-            "type": "ConstantFreq",
-            "channels": [9],
+            "type": "FixedHopFreq",
+            "channels": [0,1,6,7,9],
             "onoff": [1,1,0],
+            "rand_hop": 0,
             "modem_params":
             {
                 "type": "psk",

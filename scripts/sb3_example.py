@@ -36,7 +36,7 @@ rewards = []
 while not terminated and not truncated:
     action, _states = model.predict(obs, deterministic=True)
     obs, reward, terminated, truncated, info = env.step(action)
-    env.render()
+    #env.render()
     
 env.render()
 
