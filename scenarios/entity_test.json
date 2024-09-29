@@ -1,0 +1,37 @@
+{
+    "environment": 
+    {
+	    "num_channels": 1,
+	    "max_steps": 100,
+	    "observation_mode": "detect",
+	    "reward_mode": "dsa",
+        "target_entity": "fixed_hop_freq_1"
+    },
+    "entities": 
+    {
+        "constant_freq_1": 
+        {
+            "type": "ConstantFreq",
+            "channels": [0],
+            "onoff": [1,1,0],
+            "modem_params":
+            {
+                "type": "ask",
+                "order": 4,
+                "filter": "RRC",
+                "center_frequency": [0.0,0.0],
+                "bandwidth": 0.05,
+                "start": 0.25,
+                "duration": 1
+            }
+        }
+        
+    },
+    "render":
+    {
+        "render_mode": "terminal",
+        "render_fps": 20,
+        "render_history": 1,
+        "render_background": "black"
+    }
+}
