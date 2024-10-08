@@ -6,6 +6,7 @@ import rfrl_gym
 import math
 import numpy as np
 
+import rfrl_gym.Tests
 import rfrl_gym.entities
 
 
@@ -52,7 +53,7 @@ print(num_entities)
 
 action_list = [None] * num_entities
 
-iq_gen = rfrl_gym.datagen.iq_gen.IQ_Gen(Num_Channels, (num_entities-1), scenario_metadata['render']['render_history'], entity_list)
+iq_gen = rfrl_gym.Tests.iq_gen_test.IQ_Gen(scenario_metadata['render']['render_history'], entity_list[0])
 iq_gen.reset()
 
 info = { }
@@ -62,23 +63,16 @@ info["Samples"] = np.zeros(10000)
 for entity in entity_list:
             entity.reset(info)     
 
-entity_idx = 0
-for entity in entity_list:
-            print(entity_idx)
-            entity_action = entity.get_action(info)
-            action_list[entity_idx] = entity_action
-            entity_idx += 1
-            
-print(action_list)
-info["Samples"] = iq_gen.gen_iq(action_list)
+
+info["Samples"] = iq_gen.gen_iq()
 print(info["Samples"][0:10000])
 figure, axis = plt.subplots(1, 3)
 
 axis[0].plot(np.real(info["Samples"][2500:5000]))
 axis[0].set_title(name, loc='center', wrap=True)
 axis[1].plot(np.imag(info["Samples"][2500:5000]))
-axis[1].set_title(name, loc='center', wrap=True)
+axis[1].set_title("imag", loc='center', wrap=True)
 axis[2].plot(np.real(info["Samples"][2500:5000]), np.imag(info["Samples"][2500:5000]), '.')
-axis[2].set_title(name, loc='center', wrap=True)
+axis[2].set_title("const", loc='center', wrap=True)
 plt.savefig(img_title)
 plt.show()

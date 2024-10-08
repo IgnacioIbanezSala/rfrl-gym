@@ -16,22 +16,37 @@
             "onoff": [1,1,0],
             "modem_params":
             {
+                "type": "qam",
+                "order": 16,
+                "filter": "RRC",
+                "center_frequency": [-0.1,0.1],
+                "bandwidth": 1.00,
+                "start": 0.25,
+                "duration": 0.25
+            }
+        },
+        "constant_freq_2": 
+        {
+            "type": "ConstantFreq",
+            "channels": [0],
+            "onoff": [1,1,0],
+            "modem_params":
+            {
                 "type": "ask",
-                "order": 4,
+                "order": 16,
                 "filter": "RRC",
                 "center_frequency": [0.0,0.0],
                 "bandwidth": 0.05,
-                "start": 0.25,
+                "start": 0.5,
                 "duration": 1
             }
         }
-        
     },
     "render":
     {
         "render_mode": "terminal",
         "render_fps": 20,
-        "render_history": 1,
+        "render_history": 20,
         "render_background": "black"
     }
 }

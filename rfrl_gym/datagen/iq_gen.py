@@ -10,10 +10,10 @@ class IQ_Gen:
         self.entity_list = entity_list
         self.entity_modems = self.__init_entity_modems(entity_list)
 
-        self.samples_per_step = 100
+        self.samples_per_step = 10000
         self.noise_std = 0.01
 
-        self.fc = np.linspace(-0.5, 0.5, self.num_channels+1)+1/self.num_channels/2
+        self.fc = np.linspace(-0.5, 0.5, 2)+1/1/2
         self.rng=np.random.default_rng()
 
     def gen_iq(self, actions):
@@ -23,8 +23,8 @@ class IQ_Gen:
             for kk in range(self.num_entities):
                 if actions[kk] == k:
                     if kk != 0:
-                        entity = self.entity_list[kk-1]
                         print(self.fc)
+                        entity = self.entity_list[kk-1]
                         cent_freq = self.rng.uniform(entity.modem_params['center_frequency'][0],entity.modem_params['center_frequency'][1])
                         start = entity.modem_params['start']
                         duration = entity.modem_params['duration']
@@ -34,9 +34,12 @@ class IQ_Gen:
                         self.t = np.linspace(0, int(duration*self.samples_per_step), int(duration*self.samples_per_step))
                         data = data * np.exp(1j*2*np.pi*(self.fc[k]+cent_freq/self.num_channels)*self.t)
                         self.samples[int(start*self.samples_per_step):int((start+duration)*self.samples_per_step)] += data
+                        print(int(start*self.samples_per_step))
+                        print(int((start+duration)*self.samples_per_step))
+                        print(self.samples[int(start*self.samples_per_step):int((start+duration)*self.samples_per_step)])
+                        print(len(self.samples))
                     else:
                         self.t = np.linspace(0, self.samples_per_step, self.samples_per_step)
-                        print(self.fc)
                         data = (1.0/10.0)*np.exp(1j*2*np.pi*(1/self.num_channels)/2*((self.t-self.samples_per_step/2)**2)/self.samples_per_step)
                         data = data * np.exp(1j*2*np.pi*self.fc[k]*self.t)
                         data[0:100] = np.linspace(0,1,100)*data[0:100]
